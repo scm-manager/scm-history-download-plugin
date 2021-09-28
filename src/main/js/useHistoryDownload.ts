@@ -22,20 +22,43 @@
  * SOFTWARE.
  */
 
-package com.cloudogu.scm.historydownload;
+import { Changeset, ChangesetCollection, File, Link } from "@scm-manager/ui-types";
+import { apiClient } from "@scm-manager/ui-api";
+import { useInfiniteQuery } from "react-query";
 
-import javax.ws.rs.GET;
-import javax.ws.rs.Path;
-import javax.ws.rs.Produces;
-import javax.ws.rs.core.MediaType;
+export const useHistoryDownload = (file: File) => {
+  const initialLink = (file._links.history as Link).href;
+  const { isLoading, error, data, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<
+    ChangesetCollection,
+    Error,
+    ChangesetCollection
+  >(
+    ["link", initialLink],
+    ({ pageParam }) => apiClient.get(pageParam || initialLink).then(response => response.json()),
+    {
+      getNextPageParam: lastPage => (lastPage._links.next as Link)?.href
+    }
+  );
 
-@Path("v2/sample")
-class SampleResource {
-
-  @GET
-  @Produces(MediaType.TEXT_PLAIN)
-  public String sample() {
-    return "Sample";
+  let fnp;
+  if (hasNextPage) {
+    fnp = () => {
+      fetchNextPage();
+    };
   }
 
-}
+  return {
+    isLoading,
+    error,
+    isFetchingNextPage,
+    fetchNextPage: fnp,
+    data: concat(data?.pages)
+  };
+};
+
+const concat = (changesets?: ChangesetCollection[]): Changeset[] | undefined => {
+  if (!changesets || changesets.length === 0) {
+    return;
+  }
+  return changesets.map(collection => collection._embedded?.changesets || []).flat();
+};
