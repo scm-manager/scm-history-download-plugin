@@ -22,6 +22,13 @@
  * SOFTWARE.
  */
 
-import { binder } from "@scm-manager/ui-extensions";
+import React from "react";
+import { binder, extensionPoints } from "@scm-manager/ui-extensions";
 
-binder.bind("", "");
+import Provider from "./context"
+import SelectFileLink from "./SelectFileLink";
+import FileHistory from "./FileHistory";
+
+binder.bind<extensionPoints.ReposSourcesTreeWrapperExtension>("repos.source.tree.wrapper", Provider);
+binder.bind<extensionPoints.ReposSourcesTreeRowRightExtension>("repos.sources.tree.row.right", SelectFileLink);
+binder.bind<extensionPoints.ReposSourcesTreeRowAfterExtension>("repos.sources.tree.row.after", FileHistory);

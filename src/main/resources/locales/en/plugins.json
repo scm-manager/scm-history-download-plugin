@@ -1,5 +1,16 @@
 {
   "scm-history-download-plugin": {
-
+    "controls": {
+      "fetchMore": "Fetch more versions",
+      "noMore": "All versions fetched",
+      "hide": "Hide versions",
+      "loading": "Loading ..."
+    },
+    "download": {
+      "title": "Download"
+    },
+    "link": {
+      "title": "Download older versions"
+    }
   }
 }

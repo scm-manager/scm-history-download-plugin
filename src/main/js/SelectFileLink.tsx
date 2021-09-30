@@ -22,10 +22,29 @@
  * SOFTWARE.
  */
 
-describe("frontend unit tests", () => {
+import React, { FC } from "react";
+import { Icon, NoStyleButton } from "@scm-manager/ui-components";
+import { extensionPoints } from "@scm-manager/ui-extensions";
+import { useFileTreeContext } from "./context";
+import {useTranslation} from "react-i18next";
 
-  it("some test", () => {
-    expect( 21 * 2 ).toBe(42);
-  });
+const SelectFileLink: FC<extensionPoints.ReposSourcesTreeRowProps> = ({ file }) => {
+  const [t] = useTranslation("plugins");
+  const { select, unselect, selectedFile } = useFileTreeContext();
 
-});
+  const handleClick = () => {
+    if (file === selectedFile?.file) {
+      unselect();
+    } else {
+      select(file);
+    }
+  };
+
+  return (
+    <NoStyleButton title={t("scm-history-download-plugin.link.title")} onClick={handleClick}>
+      <Icon name="history" color="link" />
+    </NoStyleButton>
+  );
+};
+
+export default SelectFileLink;
