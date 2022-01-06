@@ -67,7 +67,7 @@ const FetchMore: FC<FetchMoreProps> = ({ fetchNextPage }) => {
 
   return (
     <LinkStyleButton onClick={fetchNextPage}>
-      <Icon name="chevron-down" color="dark" className="mr-3" />
+      <Icon name="chevron-down" color="secondary-more" className="mr-3" />
       {t("scm-history-download-plugin.controls.fetchMore")}
     </LinkStyleButton>
   );
@@ -83,7 +83,7 @@ const Controls: FC<ControlProps> = ({ isFetchingNextPage, fetchNextPage, close }
   const [t] = useTranslation("plugins");
 
   return (
-    <div className="level is-fullwidth has-background-light p-1 px-3">
+    <div className="level is-fullwidth has-background-secondary-less p-1 px-3">
       <div className="level-left">
         {isFetchingNextPage ? (
           <p>{t("scm-history-download-plugin.controls.loading")}</p>
@@ -93,7 +93,7 @@ const Controls: FC<ControlProps> = ({ isFetchingNextPage, fetchNextPage, close }
       </div>
       <LinkStyleButton className="left-right" onClick={close}>
         {t("scm-history-download-plugin.controls.hide")}
-        <Icon name="times-circle" color="dark" className="ml-3" />
+        <Icon name="times-circle" color="secondary-more" className="ml-3" />
       </LinkStyleButton>
     </div>
   );
