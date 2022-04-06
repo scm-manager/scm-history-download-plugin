@@ -1,0 +1,2 @@
+- type: fixed
+  description: Fix word break on table layout ([#6](https://github.com/scm-manager/scm-history-download-plugin/pull/6))
