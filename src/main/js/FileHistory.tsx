@@ -128,7 +128,7 @@ const FileHistoryTable: FC<TableProps> = ({ repository, revision, file, close })
             <td>
               <DateFromNow date={c.date} />
             </td>
-            <td>{c.description}</td>
+            <td className="is-word-break">{c.description}</td>
             <td>
               <DownloadLink file={file} />
             </td>
@@ -148,7 +148,7 @@ const FileHistory: FC<extensionPoints.ReposSourcesTreeRowProps> = ({ file }) => 
 
   return (
     <tr>
-      <td colSpan={42}>
+      <td colSpan={6}>
         <FileHistoryTable {...selectedFile} close={unselect} />
       </td>
     </tr>
