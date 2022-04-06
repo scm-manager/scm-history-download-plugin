@@ -36,6 +36,7 @@ import { SelectedFile, useFileTreeContext } from "./context";
 import { File, Link } from "@scm-manager/ui-types";
 import { useHistoryDownload } from "./useHistoryDownload";
 import { useTranslation } from "react-i18next";
+import styled from "styled-components";
 
 type DownloadLinkProps = {
   file: File;
@@ -72,6 +73,10 @@ const FetchMore: FC<FetchMoreProps> = ({ fetchNextPage }) => {
     </LinkStyleButton>
   );
 };
+
+const DescriptionTableData = styled.td`
+  overflow-wrap: anywhere;
+`;
 
 type ControlProps = {
   isFetchingNextPage: boolean;
@@ -128,7 +133,7 @@ const FileHistoryTable: FC<TableProps> = ({ repository, revision, file, close })
             <td>
               <DateFromNow date={c.date} />
             </td>
-            <td>{c.description}</td>
+            <DescriptionTableData>{c.description}</DescriptionTableData>
             <td>
               <DownloadLink file={file} />
             </td>
