@@ -148,7 +148,7 @@ const FileHistory: FC<extensionPoints.ReposSourcesTreeRowProps> = ({ file }) => 
 
   return (
     <tr>
-      <td colSpan={42}>
+      <td colSpan={6}>
         <FileHistoryTable {...selectedFile} close={unselect} />
       </td>
     </tr>
