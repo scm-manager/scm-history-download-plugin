@@ -14,14 +14,22 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-plugins {
-  id 'org.scm-manager.smp' version '0.17.0'
-}
+package com.cloudogu.scm.history;
 
-scmPlugin {
-  scmVersion = "3.5.0"
-  displayName = "History Download"
-  description = "A shortcut to download versions of the same file"
-  author = "Cloudogu GmbH"
-  category = "Workflow"
+import de.otto.edison.hal.Embedded;
+import de.otto.edison.hal.HalRepresentation;
+import de.otto.edison.hal.Links;
+import lombok.Getter;
+import lombok.Setter;
+
+@Getter
+@Setter
+public class FileHistoryCollectionDto extends HalRepresentation {
+
+  private int page;
+  private int pageTotal;
+
+  FileHistoryCollectionDto(Links links, Embedded embedded) {
+    super(links, embedded);
+  }
 }

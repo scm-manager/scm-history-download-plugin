@@ -17,25 +17,37 @@
 import React, { FC } from "react";
 import { extensionPoints } from "@scm-manager/ui-extensions";
 import {
-  ErrorNotification,
-  Icon,
-  Loading,
   ChangesetId,
   DateFromNow,
-  LinkStyleButton
+  ErrorNotification,
+  Icon,
+  LinkStyleButton,
+  Loading
 } from "@scm-manager/ui-components";
 import { SelectedFile, useFileTreeContext } from "./context";
-import { File, Link } from "@scm-manager/ui-types";
-import { useHistoryDownload } from "./useHistoryDownload";
+import { Changeset, File, Link } from "@scm-manager/ui-types";
+import { FileHistoryEntry, useHistoryDownload } from "./useHistoryDownload";
 import { useTranslation } from "react-i18next";
+import { useQuery, useQueryClient } from "react-query";
+import { apiClient } from "@scm-manager/ui-api";
+import styled from "styled-components";
 
 type DownloadLinkProps = {
   file: File;
+  changeset: FileHistoryEntry;
 };
 
-const DownloadLink: FC<DownloadLinkProps> = ({ file }) => {
+const DownloadLink: FC<DownloadLinkProps> = ({ changeset, file }) => {
   const [t] = useTranslation("plugins");
-  const downloadLink = (file._links.self as Link)?.href;
+  const link = (changeset._links.self as Link).href;
+  const { data, isLoading, isError } = useQuery<File>(["link", link], () =>
+    apiClient.get(link).then(response => response.json())
+  );
+
+  if (isLoading || isError) {
+    return null;
+  }
+  const downloadLink = (data!._links.self as Link).href;
   if (downloadLink) {
     return (
       <a href={downloadLink} title={t("scm-history-download-plugin.download.title")} download={file.name}>
@@ -95,6 +107,10 @@ type TableProps = SelectedFile & {
   close: () => void;
 };
 
+const BreakAtWordTableData = styled.td`
+  overflow-wrap: break-word !important;
+`;
+
 const FileHistoryTable: FC<TableProps> = ({ repository, revision, file, close }) => {
   const { isLoading, error, data, isFetchingNextPage, fetchNextPage } = useHistoryDownload(file);
 
@@ -111,19 +127,19 @@ const FileHistoryTable: FC<TableProps> = ({ repository, revision, file, close })
       <table className="table table-hover table-sm is-fullwidth">
         {data.map(c => (
           <tr key={c.id}>
-            <td>
+            <BreakAtWordTableData>
               <Icon name="history" />
-            </td>
-            <td>
-              <ChangesetId repository={repository} changeset={c} />
-            </td>
-            <td>
+            </BreakAtWordTableData>
+            <BreakAtWordTableData>
+              <ChangesetId repository={repository} changeset={c as Changeset} />
+            </BreakAtWordTableData>
+            <BreakAtWordTableData>
               <DateFromNow date={c.date} />
-            </td>
-            <td className="is-word-break">{c.description}</td>
-            <td>
-              <DownloadLink file={file} />
-            </td>
+            </BreakAtWordTableData>
+            <BreakAtWordTableData className="is-word-break">{c.description}</BreakAtWordTableData>
+            <BreakAtWordTableData>
+              <DownloadLink changeset={c} file={file} />
+            </BreakAtWordTableData>
           </tr>
         ))}
       </table>

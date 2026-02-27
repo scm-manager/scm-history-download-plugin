@@ -14,16 +14,29 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { Changeset, ChangesetCollection, File, Link } from "@scm-manager/ui-types";
+import { File, HalRepresentation, Link, PagedCollection } from "@scm-manager/ui-types";
 import { apiClient } from "@scm-manager/ui-api";
 import { useInfiniteQuery } from "react-query";
+import { Embedded } from "@scm-manager/ui-types/src/hal";
+
+export type FileHistoryEntry = HalRepresentation & {
+  id: string;
+  date: Date;
+  description: string;
+};
+
+type EmbeddedFileHistory = {
+  history: FileHistoryEntry[];
+} & Embedded;
+
+type FileHistoryCollection = PagedCollection<EmbeddedFileHistory>;
 
 export const useHistoryDownload = (file: File) => {
-  const initialLink = (file._links.history as Link).href;
+  const initialLink = (file._links["file-history"] as Link).href;
   const { isLoading, error, data, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<
-    ChangesetCollection,
+    FileHistoryCollection,
     Error,
-    ChangesetCollection
+    FileHistoryCollection
   >(
     ["link", initialLink],
     ({ pageParam }) => apiClient.get(pageParam || initialLink).then(response => response.json()),
@@ -48,9 +61,9 @@ export const useHistoryDownload = (file: File) => {
   };
 };
 
-const concat = (changesets?: ChangesetCollection[]): Changeset[] | undefined => {
+const concat = (changesets?: FileHistoryCollection[]): FileHistoryEntry[] | undefined => {
   if (!changesets || changesets.length === 0) {
     return;
   }
-  return changesets.map(collection => collection._embedded?.changesets || []).flat();
+  return changesets.map(collection => collection._embedded?.history || []).flat();
 };
