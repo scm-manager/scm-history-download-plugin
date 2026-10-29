@@ -110,7 +110,7 @@ class FileHistoryResourceTest {
     );
 
     assertThat(fileHistory.getPage()).isEqualTo(0);
-    assertThat(fileHistory.getPageTotal()).isEqualTo(5);
+    assertThat(fileHistory.isHasMore()).isFalse();
     List<HalRepresentation> history = fileHistory.getEmbedded().getItemsBy("history");
     assertThat(history).hasSize(2);
     assertThat(history.get(0).getLinks().getLinkBy("self")).get().extracting("href")

@@ -16,21 +16,15 @@
 
 import React, { FC } from "react";
 import { extensionPoints } from "@scm-manager/ui-extensions";
-import {
-  ChangesetId,
-  DateFromNow,
-  ErrorNotification,
-  Icon,
-  LinkStyleButton,
-  Loading
-} from "@scm-manager/ui-components";
+import { ChangesetId } from "@scm-manager/ui-components";
+import { AbsoluteDate, ErrorNotification, Icon, UnstyledButton, Loading } from "@scm-manager/ui-core";
 import { SelectedFile, useFileTreeContext } from "./context";
 import { Changeset, File, Link } from "@scm-manager/ui-types";
 import { FileHistoryEntry, useHistoryDownload } from "./useHistoryDownload";
 import { useTranslation } from "react-i18next";
-import { useQuery, useQueryClient } from "react-query";
 import { apiClient } from "@scm-manager/ui-api";
 import styled from "styled-components";
+import { useQuery } from "@tanstack/react-query";
 
 type DownloadLinkProps = {
   file: File;
@@ -40,9 +34,10 @@ type DownloadLinkProps = {
 const DownloadLink: FC<DownloadLinkProps> = ({ changeset, file }) => {
   const [t] = useTranslation("plugins");
   const link = (changeset._links.self as Link).href;
-  const { data, isLoading, isError } = useQuery<File>(["link", link], () =>
-    apiClient.get(link).then(response => response.json())
-  );
+  const { data, isLoading, isError } = useQuery<File>({
+    queryKey: ["link", link],
+    queryFn: () => apiClient.get(link).then((response) => response.json()),
+  });
 
   if (isLoading || isError) {
     return null;
@@ -51,7 +46,7 @@ const DownloadLink: FC<DownloadLinkProps> = ({ changeset, file }) => {
   if (downloadLink) {
     return (
       <a href={downloadLink} title={t("scm-history-download-plugin.download.title")} download={file.name}>
-        <Icon name="download" color="link" />
+        <Icon className="has-text-link">download</Icon>
       </a>
     );
   }
@@ -70,10 +65,10 @@ const FetchMore: FC<FetchMoreProps> = ({ fetchNextPage }) => {
   }
 
   return (
-    <LinkStyleButton onClick={fetchNextPage}>
-      <Icon name="chevron-down" color="secondary-more" className="mr-3" />
+    <UnstyledButton className="is-underlined" onClick={fetchNextPage}>
+      <Icon className="has-text-secondary-more mr-3">chevron-down</Icon>
       {t("scm-history-download-plugin.controls.fetchMore")}
-    </LinkStyleButton>
+    </UnstyledButton>
   );
 };
 
@@ -95,10 +90,10 @@ const Controls: FC<ControlProps> = ({ isFetchingNextPage, fetchNextPage, close }
           <FetchMore fetchNextPage={fetchNextPage} />
         )}
       </div>
-      <LinkStyleButton className="left-right" onClick={close}>
+      <UnstyledButton className="is-underlined left-right" onClick={close}>
         {t("scm-history-download-plugin.controls.hide")}
-        <Icon name="times-circle" color="secondary-more" className="ml-3" />
-      </LinkStyleButton>
+        <Icon className="has-text-secondary-more ml-3">times-circle</Icon>
+      </UnstyledButton>
     </div>
   );
 };
@@ -125,16 +120,16 @@ const FileHistoryTable: FC<TableProps> = ({ repository, revision, file, close })
   return (
     <>
       <table className="table table-hover table-sm is-fullwidth">
-        {data.map(c => (
+        {data.map((c) => (
           <tr key={c.id}>
             <BreakAtWordTableData>
-              <Icon name="history" />
+              <Icon className="has-text-secondary">history</Icon>
             </BreakAtWordTableData>
             <BreakAtWordTableData>
               <ChangesetId repository={repository} changeset={c as Changeset} />
             </BreakAtWordTableData>
             <BreakAtWordTableData>
-              <DateFromNow date={c.date} />
+              <AbsoluteDate date={c.date} />
             </BreakAtWordTableData>
             <BreakAtWordTableData className="is-word-break">{c.description}</BreakAtWordTableData>
             <BreakAtWordTableData>

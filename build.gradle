@@ -19,7 +19,7 @@ plugins {
 }
 
 scmPlugin {
-  scmVersion = "3.5.0"
+  scmVersion = "4.0.0-SNAPSHOT"
   displayName = "History Download"
   description = "A shortcut to download versions of the same file"
   author = "Cloudogu GmbH"

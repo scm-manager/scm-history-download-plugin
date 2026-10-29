@@ -14,7 +14,7 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import React, { FC, useContext, useState } from "react";
+import React, { FC, PropsWithChildren, useContext, useState } from "react";
 import {File, Repository} from "@scm-manager/ui-types";
 import { extensionPoints } from "@scm-manager/ui-extensions";
 
@@ -44,7 +44,11 @@ export const useFileTreeContext = () => {
   return useContext(Context);
 };
 
-const Provider: FC<extensionPoints.ReposSourcesTreeWrapperProps> = ({ repository, revision, children }) => {
+const Provider: FC<PropsWithChildren<extensionPoints.ReposSourcesTreeWrapper["props"]>> = ({
+  repository,
+  revision,
+  children,
+}) => {
   const [selectedFile, setSelectedFile] = useState<SelectedFile>();
 
   const select = (file: File) => {

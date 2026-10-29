@@ -27,7 +27,7 @@ import lombok.Setter;
 public class FileHistoryCollectionDto extends HalRepresentation {
 
   private int page;
-  private int pageTotal;
+  private boolean hasMore;
 
   FileHistoryCollectionDto(Links links, Embedded embedded) {
     super(links, embedded);

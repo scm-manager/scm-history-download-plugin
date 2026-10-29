@@ -14,10 +14,10 @@
  * along with this program. If not, see https://www.gnu.org/licenses/.
  */
 
-import { File, HalRepresentation, Link, PagedCollection } from "@scm-manager/ui-types";
+import { File, HalRepresentation, Link } from "@scm-manager/ui-types";
 import { apiClient } from "@scm-manager/ui-api";
-import { useInfiniteQuery } from "react-query";
-import { Embedded } from "@scm-manager/ui-types/src/hal";
+import { useInfiniteQuery } from "@tanstack/react-query";
+import { Embedded, HalRepresentationWithEmbedded } from "@scm-manager/ui-types/src/hal";
 
 export type FileHistoryEntry = HalRepresentation & {
   id: string;
@@ -29,21 +29,26 @@ type EmbeddedFileHistory = {
   history: FileHistoryEntry[];
 } & Embedded;
 
-type FileHistoryCollection = PagedCollection<EmbeddedFileHistory>;
+type FileHistoryCollection = HalRepresentationWithEmbedded<EmbeddedFileHistory> & {
+  page: number;
+  hasMore: number;
+};
 
+type FileHistoryCollectionPages = {
+  pages: FileHistoryCollection[];
+};
 export const useHistoryDownload = (file: File) => {
   const initialLink = (file._links["file-history"] as Link).href;
   const { isLoading, error, data, isFetchingNextPage, fetchNextPage, hasNextPage } = useInfiniteQuery<
     FileHistoryCollection,
     Error,
-    FileHistoryCollection
-  >(
-    ["link", initialLink],
-    ({ pageParam }) => apiClient.get(pageParam || initialLink).then(response => response.json()),
-    {
-      getNextPageParam: lastPage => (lastPage._links.next as Link)?.href
-    }
-  );
+    FileHistoryCollectionPages
+  >({
+    queryKey: ["link", initialLink],
+    queryFn: ({ pageParam }) => apiClient.get(pageParam as string).then((response) => response.json()),
+    getNextPageParam: (lastPage) => (lastPage._links.next as Link)?.href,
+    initialPageParam: initialLink,
+  });
 
   let fnp;
   if (hasNextPage) {
@@ -57,7 +62,7 @@ export const useHistoryDownload = (file: File) => {
     error,
     isFetchingNextPage,
     fetchNextPage: fnp,
-    data: concat(data?.pages)
+    data: concat(data?.pages),
   };
 };
 
@@ -65,5 +70,5 @@ const concat = (changesets?: FileHistoryCollection[]): FileHistoryEntry[] | unde
   if (!changesets || changesets.length === 0) {
     return;
   }
-  return changesets.map(collection => collection._embedded?.history || []).flat();
+  return changesets.map((collection) => collection._embedded?.history || []).flat();
 };

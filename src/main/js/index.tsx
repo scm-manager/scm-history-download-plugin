@@ -21,6 +21,6 @@ import Provider from "./context"
 import SelectFileLink from "./SelectFileLink";
 import FileHistory from "./FileHistory";
 
-binder.bind<extensionPoints.ReposSourcesTreeWrapperExtension>("repos.source.tree.wrapper", Provider);
-binder.bind<extensionPoints.ReposSourcesTreeRowRightExtension>("repos.sources.tree.row.right", SelectFileLink);
-binder.bind<extensionPoints.ReposSourcesTreeRowAfterExtension>("repos.sources.tree.row.after", FileHistory);
+binder.bind<extensionPoints.ReposSourcesTreeWrapper>("repos.source.tree.wrapper", Provider);
+binder.bind<extensionPoints.ReposSourcesTreeRowRight>("repos.sources.tree.row.right", SelectFileLink);
+binder.bind<extensionPoints.ReposSourcesTreeRowAfter>("repos.sources.tree.row.after", FileHistory);

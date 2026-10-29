@@ -45,14 +45,13 @@ public class FileHistoryDtoMapper {
   }
 
   FileHistoryCollectionDto map(int pageNumber, int pageSize, ChangesetPagingResult pagingResult, String selfLink, NamespaceAndName namespaceAndName, String path) {
-    int overallCount = pagingResult.getTotal();
     List<FileHistoryDto> dtos = pagingResult.getChangesets().stream().map(c -> map(c, namespaceAndName, path)).toList();
-    NumberedPaging paging = zeroBasedNumberedPaging(pageNumber, pageSize, overallCount);
+    NumberedPaging paging = zeroBasedNumberedPaging(pageNumber, pageSize, pagingResult.isHasMore());
     Links links = createLinks(paging, selfLink);
     Embedded embedded = embedDtos(dtos);
     FileHistoryCollectionDto collectionDto = createCollectionDto(links, embedded);
     collectionDto.setPage(pageNumber);
-    collectionDto.setPageTotal(computePageTotal(pageSize, overallCount));
+    collectionDto.setHasMore(pagingResult.isHasMore());
     return collectionDto;
   }
 

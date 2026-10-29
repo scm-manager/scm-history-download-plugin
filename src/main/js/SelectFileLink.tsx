@@ -15,10 +15,10 @@
  */
 
 import React, { FC } from "react";
-import { Icon, NoStyleButton } from "@scm-manager/ui-components";
+import { Icon, UnstyledButton } from "@scm-manager/ui-core";
 import { extensionPoints } from "@scm-manager/ui-extensions";
 import { useFileTreeContext } from "./context";
-import {useTranslation} from "react-i18next";
+import { useTranslation } from "react-i18next";
 
 const SelectFileLink: FC<extensionPoints.ReposSourcesTreeRowProps> = ({ file }) => {
   const [t] = useTranslation("plugins");
@@ -33,9 +33,13 @@ const SelectFileLink: FC<extensionPoints.ReposSourcesTreeRowProps> = ({ file }) 
   };
 
   return (
-    <NoStyleButton title={t("scm-history-download-plugin.link.title")} onClick={handleClick}>
-      <Icon name="history" color="link" />
-    </NoStyleButton>
+    <UnstyledButton
+      title={t("scm-history-download-plugin.link.title")}
+      aria-label={t("scm-history-download-plugin.link.title")}
+      onClick={handleClick}
+    >
+      <Icon className="has-text-link">history</Icon>
+    </UnstyledButton>
   );
 };
 
